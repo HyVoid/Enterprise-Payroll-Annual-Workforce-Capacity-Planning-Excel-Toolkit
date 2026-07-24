@@ -101,26 +101,37 @@ export const DeptDataView: React.FC<DeptDataViewProps> = ({
 
   return (
     <div className="space-y-6 page-fade-up">
-      {/* Department Tab Quick Switch Bar */}
-      <div className="app-card p-2.5 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-        <span className="text-xs font-semibold text-[#888888] px-2 shrink-0 flex items-center gap-1">
-          <Layers className="w-3.5 h-3.5 text-[#2251FF]" />
-          <span>Sheets:</span>
+      {/* Department Tab Quick Switch Bar - Excel Sheet Navigation Style */}
+      <div className="app-card p-2 flex items-center gap-1.5 overflow-x-auto no-scrollbar bg-white/80 border border-[#E8E8E6] shadow-2xs">
+        <span className="text-xs font-bold text-[#051C2C] px-2 shrink-0 flex items-center gap-1.5 border-r border-[#E8E8E6] mr-1 py-1">
+          <Layers className="w-4 h-4 text-[#2251FF]" />
+          <span>Depts:</span>
         </span>
-        {DEPARTMENTS.map((dept) => (
-          <button
-            key={dept.id}
-            onClick={() => onSelectDeptTab(dept.id)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium shrink-0 transition-all flex items-center gap-1.5 ${
-              dept.id === deptId
-                ? 'bg-[#051C2C] text-white shadow-xs font-semibold'
-                : 'text-[#051C2C] bg-[#F5F5F2] hover:bg-gray-200'
-            }`}
-          >
-            <span>{dept.shortName}</span>
-            <span className="opacity-60 text-[10px]">({dept.deptCode})</span>
-          </button>
-        ))}
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+          {DEPARTMENTS.map((dept) => {
+            const isActive = dept.id === deptId;
+            return (
+              <button
+                key={dept.id}
+                onClick={() => onSelectDeptTab(dept.id)}
+                className={`px-3 py-1.5 rounded-lg text-xs transition-all flex items-center gap-2 shrink-0 border ${
+                  isActive
+                    ? 'bg-[#051C2C] text-white border-[#051C2C] font-semibold shadow-xs'
+                    : 'bg-[#F5F5F2] text-[#051C2C] border-transparent hover:border-[#2251FF]/30 hover:bg-gray-200/80 font-medium'
+                }`}
+              >
+                <span
+                  className={`text-[10px] font-mono font-bold px-1.5 py-0.2 rounded ${
+                    isActive ? 'bg-[#2251FF] text-white' : 'bg-gray-200 text-[#051C2C]'
+                  }`}
+                >
+                  {dept.deptCode}
+                </span>
+                <span>{dept.shortName}</span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Main Department Header */}

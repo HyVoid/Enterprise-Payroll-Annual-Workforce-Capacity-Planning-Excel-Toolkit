@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavigationTab } from '../types';
 import { DEPARTMENTS } from '../data/defaultData';
 import {
@@ -14,9 +14,13 @@ import {
   RotateCcw,
   Save,
   ChevronDown,
+  ChevronRight,
+  Menu,
+  X,
+  ShieldCheck,
 } from 'lucide-react';
 
-interface NavbarProps {
+interface SidebarProps {
   activeTab: NavigationTab;
   setActiveTab: (tab: NavigationTab) => void;
   lastSaved: string;
@@ -26,7 +30,7 @@ interface NavbarProps {
   onOpenResetModal: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({
+export const Navbar: React.FC<SidebarProps> = ({
   activeTab,
   setActiveTab,
   lastSaved,
@@ -35,198 +39,266 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenBulkCsv,
   onOpenResetModal,
 }) => {
-  const [deptMenuOpen, setDeptMenuOpen] = React.useState(false);
-
   const isDeptActive = activeTab.startsWith('dept_');
+  // State for Depts sub-menu collapse/expand (defaults to expanded if a dept is active)
+  const [isDeptsExpanded, setIsDeptsExpanded] = useState<boolean>(true);
+  // Mobile sidebar open state
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
+
   const activeDeptMeta = DEPARTMENTS.find((d) => d.id === activeTab);
 
-  return (
-    <header className="sticky top-0 z-50 h-[56px] bg-white border-b border-[#E8E8E6] shadow-xs select-none">
-      <div className="max-w-[1400px] h-full mx-auto px-10 flex items-center justify-between gap-4">
-        {/* Left: Brand Title */}
-        <div className="flex items-center gap-3 shrink-0">
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="font-garamond text-base md:text-lg font-bold text-[#051C2C] leading-none tracking-tight">
-                Enterprise Payroll & Annual Workforce Capacity Planning Excel Toolkit
-              </h1>
-              <span className="text-[10px] font-semibold tracking-wider uppercase px-2 py-0.5 rounded-full bg-[#2251FF]/10 text-[#2251FF]">
-                SaaS Edition
-              </span>
-            </div>
-            <div className="flex items-center gap-1.5 text-[11px] text-[#888888] mt-0.5">
-              <Save className="w-3 h-3 text-[#00C853]" />
-              <span>Last saved: {lastSaved || 'Just now'}</span>
-            </div>
+  const handleTabClick = (tab: NavigationTab) => {
+    setActiveTab(tab);
+    setIsMobileMenuOpen(false); // Close mobile menu after selection
+  };
+
+  const navContent = (
+    <div className="flex flex-col h-full justify-between p-4 space-y-4 text-xs select-none">
+      {/* Top Header Section: Title & Badge without Icon */}
+      <div className="space-y-3 pb-4 border-b border-[#E8E8E6]">
+        <div className="space-y-1.5">
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-full bg-[#2251FF]/10 text-[#2251FF]">
+              SaaS Edition
+            </span>
+            <span className="flex items-center gap-1 text-[10px] text-[#00C853] font-semibold">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#00C853] animate-pulse" />
+              Auto-Save
+            </span>
           </div>
+          {/* Main Title - Pure Typography without Icon */}
+          <h1 className="font-garamond text-lg font-bold text-[#051C2C] leading-snug tracking-tight">
+            Enterprise Payroll & Annual Workforce Capacity Planning Excel Toolkit
+          </h1>
         </div>
 
-        {/* Center/Right: Tab Switcher */}
-        <nav className="flex items-center gap-1 overflow-x-auto no-scrollbar h-full pt-1">
-          {/* 1. Dashboard */}
+        <div className="flex items-center gap-1.5 text-[11px] text-[#888888] bg-[#F5F5F2] px-2.5 py-1.5 rounded-lg border border-[#E8E8E6]">
+          <Save className="w-3.5 h-3.5 text-[#00C853] shrink-0" />
+          <span className="truncate">Saved: {lastSaved || 'Just now'}</span>
+        </div>
+      </div>
+
+      {/* Navigation Links List */}
+      <div className="flex-1 overflow-y-auto space-y-1 pr-1 custom-scrollbar">
+        <div className="px-2 py-1 text-[10px] font-bold text-[#888888] uppercase tracking-wider">
+          Core Modules
+        </div>
+
+        {/* 1. Dashboard */}
+        <button
+          onClick={() => handleTabClick('dashboard')}
+          className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl font-medium transition-all ${
+            activeTab === 'dashboard'
+              ? 'bg-[#051C2C] text-white font-semibold shadow-xs'
+              : 'text-[#051C2C] hover:bg-gray-100'
+          }`}
+        >
+          <BarChart3 className={`w-4 h-4 ${activeTab === 'dashboard' ? 'text-[#2251FF]' : 'text-[#888888]'}`} />
+          <span className="text-xs">Dashboard</span>
+        </button>
+
+        {/* 2. Settings */}
+        <button
+          onClick={() => handleTabClick('settings')}
+          className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl font-medium transition-all ${
+            activeTab === 'settings'
+              ? 'bg-[#051C2C] text-white font-semibold shadow-xs'
+              : 'text-[#051C2C] hover:bg-gray-100'
+          }`}
+        >
+          <SettingsIcon className={`w-4 h-4 ${activeTab === 'settings' ? 'text-[#2251FF]' : 'text-[#888888]'}`} />
+          <span className="text-xs">Settings</span>
+        </button>
+
+        {/* 3. Employees */}
+        <button
+          onClick={() => handleTabClick('employee_master')}
+          className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl font-medium transition-all ${
+            activeTab === 'employee_master'
+              ? 'bg-[#051C2C] text-white font-semibold shadow-xs'
+              : 'text-[#051C2C] hover:bg-gray-100'
+          }`}
+        >
+          <Users className={`w-4 h-4 ${activeTab === 'employee_master' ? 'text-[#2251FF]' : 'text-[#888888]'}`} />
+          <span className="text-xs">Employees</span>
+        </button>
+
+        {/* 4. Depts Accordion Sub-Menu */}
+        <div className="space-y-1 pt-1">
           <button
-            onClick={() => setActiveTab('dashboard')}
-            className={`relative h-full px-3 text-xs font-medium flex items-center gap-1.5 transition-colors ${
-              activeTab === 'dashboard'
-                ? 'text-[#2251FF] font-semibold'
-                : 'text-[#888888] hover:text-[#051C2C]'
+            onClick={() => setIsDeptsExpanded(!isDeptsExpanded)}
+            className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl font-medium transition-all ${
+              isDeptActive
+                ? 'bg-[#2251FF]/10 text-[#2251FF] font-semibold'
+                : 'text-[#051C2C] hover:bg-gray-100'
             }`}
           >
-            <BarChart3 className="w-3.5 h-3.5" />
-            <span>Dashboard</span>
-            {activeTab === 'dashboard' && (
-              <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#2251FF] rounded-t-full" />
-            )}
-          </button>
-
-          {/* 2. Settings */}
-          <button
-            onClick={() => setActiveTab('settings')}
-            className={`relative h-full px-3 text-xs font-medium flex items-center gap-1.5 transition-colors ${
-              activeTab === 'settings'
-                ? 'text-[#2251FF] font-semibold'
-                : 'text-[#888888] hover:text-[#051C2C]'
-            }`}
-          >
-            <SettingsIcon className="w-3.5 h-3.5" />
-            <span>Settings</span>
-            {activeTab === 'settings' && (
-              <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#2251FF] rounded-t-full" />
-            )}
-          </button>
-
-          {/* 3. Employee Master */}
-          <button
-            onClick={() => setActiveTab('employee_master')}
-            className={`relative h-full px-3 text-xs font-medium flex items-center gap-1.5 transition-colors ${
-              activeTab === 'employee_master'
-                ? 'text-[#2251FF] font-semibold'
-                : 'text-[#888888] hover:text-[#051C2C]'
-            }`}
-          >
-            <Users className="w-3.5 h-3.5" />
-            <span>Employees</span>
-            {activeTab === 'employee_master' && (
-              <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#2251FF] rounded-t-full" />
-            )}
-          </button>
-
-          {/* 4. Dept 1~7 Dropdown/Tabs */}
-          <div className="relative h-full">
-            <button
-              onClick={() => setDeptMenuOpen(!deptMenuOpen)}
-              onBlur={() => setTimeout(() => setDeptMenuOpen(false), 200)}
-              className={`relative h-full px-3 text-xs font-medium flex items-center gap-1.5 transition-colors ${
-                isDeptActive
-                  ? 'text-[#2251FF] font-semibold'
-                  : 'text-[#888888] hover:text-[#051C2C]'
-              }`}
-            >
-              <Building2 className="w-3.5 h-3.5" />
-              <span>{isDeptActive && activeDeptMeta ? activeDeptMeta.shortName : 'Depts'}</span>
-              <ChevronDown className="w-3 h-3 ml-0.5" />
+            <div className="flex items-center gap-2.5">
+              <Building2 className={`w-4 h-4 ${isDeptActive ? 'text-[#2251FF]' : 'text-[#888888]'}`} />
+              <span className="text-xs">Depts</span>
+            </div>
+            <div className="flex items-center gap-1">
               {isDeptActive && (
-                <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#2251FF] rounded-t-full" />
+                <span className="text-[10px] bg-[#2251FF] text-white font-bold px-1.5 py-0.2 rounded-full">
+                  {activeDeptMeta?.deptCode}
+                </span>
               )}
-            </button>
+              {isDeptsExpanded ? (
+                <ChevronDown className="w-3.5 h-3.5 text-[#888888]" />
+              ) : (
+                <ChevronRight className="w-3.5 h-3.5 text-[#888888]" />
+              )}
+            </div>
+          </button>
 
-            {deptMenuOpen && (
-              <div className="absolute top-[52px] left-0 w-60 bg-white border border-[#E8E8E6] rounded-xl shadow-lg py-1.5 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-                <div className="px-3 py-1 text-[10px] font-semibold text-[#888888] uppercase tracking-wider">
-                  Select Department (Sheet)
-                </div>
-                {DEPARTMENTS.map((dept) => (
+          {/* Expanded Dept Sub-Items */}
+          {isDeptsExpanded && (
+            <div className="pl-3 space-y-1 border-l-2 border-[#E8E8E6] ml-4 my-1">
+              {DEPARTMENTS.map((dept) => {
+                const isThisDeptActive = activeTab === dept.id;
+                return (
                   <button
                     key={dept.id}
-                    onClick={() => {
-                      setActiveTab(dept.id as NavigationTab);
-                      setDeptMenuOpen(false);
-                    }}
-                    className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-[#F5F5F2] transition-colors ${
-                      activeTab === dept.id ? 'text-[#2251FF] font-semibold bg-[#2251FF]/5' : 'text-[#051C2C]'
+                    onClick={() => handleTabClick(dept.id as NavigationTab)}
+                    className={`w-full text-left px-2.5 py-2 rounded-lg text-xs flex items-center justify-between transition-all ${
+                      isThisDeptActive
+                        ? 'bg-[#051C2C] text-white font-semibold shadow-2xs'
+                        : 'text-[#051C2C] hover:bg-gray-100 hover:text-[#2251FF]'
                     }`}
                   >
                     <span className="truncate">{dept.shortName}: {dept.name}</span>
-                    <span className="text-[10px] text-[#888888] font-mono px-1.5 py-0.5 rounded bg-gray-100">
+                    <span
+                      className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded shrink-0 ml-1 ${
+                        isThisDeptActive
+                          ? 'bg-white/20 text-white'
+                          : 'bg-gray-200/80 text-[#051C2C]'
+                      }`}
+                    >
                       {dept.deptCode}
                     </span>
                   </button>
-                ))}
-              </div>
-            )}
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* 5. Payroll Summary */}
+        <button
+          onClick={() => handleTabClick('payroll_summary')}
+          className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl font-medium transition-all ${
+            activeTab === 'payroll_summary'
+              ? 'bg-[#051C2C] text-white font-semibold shadow-xs'
+              : 'text-[#051C2C] hover:bg-gray-100'
+          }`}
+        >
+          <PieChart className={`w-4 h-4 ${activeTab === 'payroll_summary' ? 'text-[#2251FF]' : 'text-[#888888]'}`} />
+          <span className="text-xs">Payroll Summary</span>
+        </button>
+
+        {/* 6. Hours Tracker */}
+        <button
+          onClick={() => handleTabClick('annual_hours_tracker')}
+          className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl font-medium transition-all ${
+            activeTab === 'annual_hours_tracker'
+              ? 'bg-[#051C2C] text-white font-semibold shadow-xs'
+              : 'text-[#051C2C] hover:bg-gray-100'
+          }`}
+        >
+          <Clock className={`w-4 h-4 ${activeTab === 'annual_hours_tracker' ? 'text-[#2251FF]' : 'text-[#888888]'}`} />
+          <span className="text-xs">Hours Tracker</span>
+        </button>
+
+        {/* Data Tools Section */}
+        <div className="pt-4 pb-1">
+          <div className="px-2 py-1 text-[10px] font-bold text-[#888888] uppercase tracking-wider">
+            Data & Backup
+          </div>
+          <div className="grid grid-cols-2 gap-1.5 mt-1">
+            <button
+              onClick={onExportBackup}
+              className="px-2.5 py-2 rounded-lg bg-[#F5F5F2] hover:bg-[#E8E8E6] text-[#051C2C] font-semibold text-[11px] flex items-center justify-center gap-1 transition-colors border border-[#E8E8E6]"
+            >
+              <Download className="w-3.5 h-3.5 text-[#2251FF]" />
+              <span>Export</span>
+            </button>
+
+            <button
+              onClick={onOpenImportBackup}
+              className="px-2.5 py-2 rounded-lg bg-[#F5F5F2] hover:bg-[#E8E8E6] text-[#051C2C] font-semibold text-[11px] flex items-center justify-center gap-1 transition-colors border border-[#E8E8E6]"
+            >
+              <Upload className="w-3.5 h-3.5 text-[#2251FF]" />
+              <span>Import</span>
+            </button>
           </div>
 
-          {/* 5. Payroll Summary */}
-          <button
-            onClick={() => setActiveTab('payroll_summary')}
-            className={`relative h-full px-3 text-xs font-medium flex items-center gap-1.5 transition-colors ${
-              activeTab === 'payroll_summary'
-                ? 'text-[#2251FF] font-semibold'
-                : 'text-[#888888] hover:text-[#051C2C]'
-            }`}
-          >
-            <PieChart className="w-3.5 h-3.5" />
-            <span>Payroll Summary</span>
-            {activeTab === 'payroll_summary' && (
-              <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#2251FF] rounded-t-full" />
-            )}
-          </button>
+          <div className="grid grid-cols-2 gap-1.5 mt-1.5">
+            <button
+              onClick={onOpenBulkCsv}
+              className="px-2.5 py-2 rounded-lg bg-[#F5F5F2] hover:bg-[#E8E8E6] text-[#051C2C] font-semibold text-[11px] flex items-center justify-center gap-1 transition-colors border border-[#E8E8E6]"
+            >
+              <FileSpreadsheet className="w-3.5 h-3.5 text-[#00C853]" />
+              <span>Bulk CSV</span>
+            </button>
 
-          {/* 6. Annual Hours Tracker */}
-          <button
-            onClick={() => setActiveTab('annual_hours_tracker')}
-            className={`relative h-full px-3 text-xs font-medium flex items-center gap-1.5 transition-colors ${
-              activeTab === 'annual_hours_tracker'
-                ? 'text-[#2251FF] font-semibold'
-                : 'text-[#888888] hover:text-[#051C2C]'
-            }`}
-          >
-            <Clock className="w-3.5 h-3.5" />
-            <span>Hours Tracker</span>
-            {activeTab === 'annual_hours_tracker' && (
-              <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#2251FF] rounded-t-full" />
-            )}
-          </button>
-        </nav>
-
-        {/* Far Right: Utility Buttons (Backup Export/Import, CSV, Reset) */}
-        <div className="flex items-center gap-2 shrink-0">
-          <button
-            onClick={onExportBackup}
-            title="Export full JSON backup"
-            className="px-2.5 py-1.5 text-xs font-medium text-[#051C2C] bg-[#F5F5F2] hover:bg-[#E8E8E6] rounded-md flex items-center gap-1 transition-colors"
-          >
-            <Download className="w-3.5 h-3.5 text-[#2251FF]" />
-            <span className="hidden sm:inline">Export</span>
-          </button>
-
-          <button
-            onClick={onOpenImportBackup}
-            title="Import JSON backup"
-            className="px-2.5 py-1.5 text-xs font-medium text-[#051C2C] bg-[#F5F5F2] hover:bg-[#E8E8E6] rounded-md flex items-center gap-1 transition-colors"
-          >
-            <Upload className="w-3.5 h-3.5 text-[#2251FF]" />
-            <span className="hidden sm:inline">Import</span>
-          </button>
-
-          <button
-            onClick={onOpenBulkCsv}
-            title="Bulk CSV Import"
-            className="px-2.5 py-1.5 text-xs font-medium text-[#051C2C] bg-[#F5F5F2] hover:bg-[#E8E8E6] rounded-md flex items-center gap-1 transition-colors"
-          >
-            <FileSpreadsheet className="w-3.5 h-3.5 text-[#00C853]" />
-            <span className="hidden sm:inline">Bulk CSV</span>
-          </button>
-
-          <button
-            onClick={onOpenResetModal}
-            title="Reset data to defaults"
-            className="p-1.5 text-xs text-[#888888] hover:text-[#D32F2F] hover:bg-red-50 rounded-md transition-colors"
-          >
-            <RotateCcw className="w-3.5 h-3.5" />
-          </button>
+            <button
+              onClick={onOpenResetModal}
+              className="px-2.5 py-2 rounded-lg bg-red-50 hover:bg-red-100 text-[#D32F2F] font-semibold text-[11px] flex items-center justify-center gap-1 transition-colors border border-red-200"
+            >
+              <RotateCcw className="w-3.5 h-3.5 text-[#D32F2F]" />
+              <span>Reset</span>
+            </button>
+          </div>
         </div>
       </div>
-    </header>
+
+      {/* Footer Privacy Statement */}
+      <div className="pt-3 border-t border-[#E8E8E6] space-y-1 text-[10px] text-[#888888]">
+        <div className="flex items-center gap-1 font-semibold text-[#051C2C]">
+          <ShieldCheck className="w-3.5 h-3.5 text-[#2251FF]" />
+          <span>Privacy & Security Notice</span>
+        </div>
+        <p className="leading-tight text-[10px] opacity-90">
+          All data storage operates strictly within your browser's localStorage. The application itself does not retain or store any user data on external servers.
+        </p>
+      </div>
+    </div>
+  );
+
+  return (
+    <>
+      {/* Desktop Permanent Sidebar (1024px and up) */}
+      <aside className="hidden lg:block w-72 h-screen sticky top-0 bg-white border-r border-[#E8E8E6] shrink-0 z-30 shadow-xs">
+        {navContent}
+      </aside>
+
+      {/* Mobile Top Header with Hamburger */}
+      <div className="lg:hidden sticky top-0 z-40 bg-white border-b border-[#E8E8E6] px-4 py-3 flex items-center justify-between shadow-xs">
+        <div>
+          <h1 className="font-garamond text-sm font-bold text-[#051C2C] leading-tight">
+            Enterprise Payroll & Capacity Planning
+          </h1>
+          <p className="text-[10px] text-[#888888]">Excel Toolkit SaaS</p>
+        </div>
+
+        <button
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="p-2 rounded-lg bg-[#F5F5F2] hover:bg-[#E8E8E6] text-[#051C2C] transition-colors"
+          aria-label="Toggle Navigation Menu"
+        >
+          {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </button>
+      </div>
+
+      {/* Mobile Drawer Overlay */}
+      {isMobileMenuOpen && (
+        <div className="lg:hidden fixed inset-0 z-50 bg-[#051C2C]/50 backdrop-blur-xs flex">
+          <div className="w-80 max-w-[85vw] bg-white h-full shadow-2xl animate-in slide-in-from-left duration-200">
+            {navContent}
+          </div>
+          <div className="flex-1" onClick={() => setIsMobileMenuOpen(false)} />
+        </div>
+      )}
+    </>
   );
 };

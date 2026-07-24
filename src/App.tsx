@@ -239,8 +239,8 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F5F2] text-[#051C2C] flex flex-col antialiased">
-      {/* Top Sticky Header */}
+    <div className="min-h-screen bg-[#F5F5F2] text-[#051C2C] flex flex-col lg:flex-row antialiased">
+      {/* Sidebar Navigation */}
       <Navbar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -251,90 +251,87 @@ export default function App() {
         onOpenResetModal={() => setIsResetModalOpen(true)}
       />
 
-      {/* Toast Alert */}
-      {toastMessage && (
-        <div className="fixed bottom-5 right-5 z-50 bg-[#051C2C] text-white px-4 py-2.5 rounded-xl shadow-lg text-xs font-semibold flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2 duration-200">
-          <span className="w-2 h-2 rounded-full bg-[#00C853]" />
-          <span>{toastMessage}</span>
-        </div>
-      )}
-
-      {/* Main Container Area - Max 1400px centered, 40px left/right padding */}
-      <main className="flex-1 max-w-[1400px] w-full mx-auto px-10 py-8">
-        {activeTab === 'dashboard' && (
-          <DashboardView
-            allDeptLogs={deptLogs}
-            employees={employees}
-            settings={settings}
-            onNavigateTab={setActiveTab}
-          />
+      {/* Main Container Area */}
+      <div className="flex-1 flex flex-col min-w-0 min-h-screen">
+        {/* Toast Alert */}
+        {toastMessage && (
+          <div className="fixed bottom-5 right-5 z-50 bg-[#051C2C] text-white px-4 py-2.5 rounded-xl shadow-lg text-xs font-semibold flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2 duration-200">
+            <span className="w-2 h-2 rounded-full bg-[#00C853]" />
+            <span>{toastMessage}</span>
+          </div>
         )}
 
-        {activeTab === 'settings' && (
-          <SettingsView
-            settings={settings}
-            onUpdateSettings={handleUpdateSettings}
-          />
-        )}
+        {/* Content View */}
+        <main className="flex-1 max-w-[1400px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          {activeTab === 'dashboard' && (
+            <DashboardView
+              allDeptLogs={deptLogs}
+              employees={employees}
+              settings={settings}
+              onNavigateTab={setActiveTab}
+            />
+          )}
 
-        {activeTab === 'employee_master' && (
-          <EmployeeMasterView
-            employees={employees}
-            settings={settings}
-            onAddEmployee={handleAddEmployee}
-            onUpdateEmployee={handleUpdateEmployee}
-            onDeleteEmployee={handleDeleteEmployee}
-          />
-        )}
+          {activeTab === 'settings' && (
+            <SettingsView
+              settings={settings}
+              onUpdateSettings={handleUpdateSettings}
+            />
+          )}
 
-        {activeTab.startsWith('dept_') && (
-          <DeptDataView
-            deptId={activeTab}
-            allDeptLogs={deptLogs}
-            employees={employees}
-            settings={settings}
-            onSelectDeptTab={(dId) => setActiveTab(dId as NavigationTab)}
-            onAddLogEntry={handleAddLogEntry}
-            onUpdateLogEntry={handleUpdateLogEntry}
-            onDeleteLogEntry={handleDeleteLogEntry}
-          />
-        )}
+          {activeTab === 'employee_master' && (
+            <EmployeeMasterView
+              employees={employees}
+              settings={settings}
+              onAddEmployee={handleAddEmployee}
+              onUpdateEmployee={handleUpdateEmployee}
+              onDeleteEmployee={handleDeleteEmployee}
+            />
+          )}
 
-        {activeTab === 'payroll_summary' && (
-          <PayrollSummaryView
-            allDeptLogs={deptLogs}
-            employees={employees}
-            settings={settings}
-          />
-        )}
+          {activeTab.startsWith('dept_') && (
+            <DeptDataView
+              deptId={activeTab}
+              allDeptLogs={deptLogs}
+              employees={employees}
+              settings={settings}
+              onSelectDeptTab={(dId) => setActiveTab(dId as NavigationTab)}
+              onAddLogEntry={handleAddLogEntry}
+              onUpdateLogEntry={handleUpdateLogEntry}
+              onDeleteLogEntry={handleDeleteLogEntry}
+            />
+          )}
 
-        {activeTab === 'annual_hours_tracker' && (
-          <AnnualHoursTrackerView
-            allDeptLogs={deptLogs}
-            employees={employees}
-            settings={settings}
-          />
-        )}
-      </main>
+          {activeTab === 'payroll_summary' && (
+            <PayrollSummaryView
+              allDeptLogs={deptLogs}
+              employees={employees}
+              settings={settings}
+            />
+          )}
 
-      {/* Footer */}
-      <footer className="border-t border-[#E8E8E6] bg-white py-4 text-center text-xs text-[#888888]">
-        <div className="max-w-[1400px] mx-auto px-10 flex flex-col gap-2">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
+          {activeTab === 'annual_hours_tracker' && (
+            <AnnualHoursTrackerView
+              allDeptLogs={deptLogs}
+              employees={employees}
+              settings={settings}
+            />
+          )}
+        </main>
+
+        {/* Footer */}
+        <footer className="border-t border-[#E8E8E6] bg-white py-3 text-center text-xs text-[#888888] mt-auto">
+          <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2">
             <div>
               Enterprise Payroll & Annual Workforce Capacity Planning Excel Toolkit &copy; {new Date().getFullYear()}
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 text-[11px]">
               <span>Status: <strong className="text-[#00C853]">Auto-save Active</strong></span>
               <span>Frontend Engine: <strong className="text-[#051C2C]">React + TypeScript</strong></span>
             </div>
           </div>
-          <div className="text-[11px] text-[#888888] pt-1 border-t border-gray-100 flex items-center justify-center gap-1.5">
-            <span className="font-semibold text-[#051C2C]">Privacy & Data Security Notice:</span>
-            <span>All data storage operates strictly within your browser's localStorage. The application itself does not retain or store any user data on external servers.</span>
-          </div>
-        </div>
-      </footer>
+        </footer>
+      </div>
 
       {/* Modals */}
       <ImportBackupModal
