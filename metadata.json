@@ -1,5 +1,5 @@
 {
-  "name": "Workforce Capacity & Payroll Planning Toolkit",
+  "name": "Enterprise Payroll & Annual Workforce Capacity Planning Excel Toolkit",
   "description": "SaaS Workforce Capacity Planning & Payroll Consolidation Toolkit with real-time Excel calculations, localStorage auto-save, and backup import/export.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]

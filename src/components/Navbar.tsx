@@ -43,15 +43,12 @@ export const Navbar: React.FC<NavbarProps> = ({
   return (
     <header className="sticky top-0 z-50 h-[56px] bg-white border-b border-[#E8E8E6] shadow-xs select-none">
       <div className="max-w-[1400px] h-full mx-auto px-10 flex items-center justify-between gap-4">
-        {/* Left: Logo & Brand Title */}
+        {/* Left: Brand Title */}
         <div className="flex items-center gap-3 shrink-0">
-          <div className="w-8 h-8 rounded-lg bg-[#051C2C] text-white flex items-center justify-center font-bold text-sm shadow-xs">
-            W
-          </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="font-garamond text-lg font-bold text-[#051C2C] leading-none tracking-tight">
-                Workforce Capacity & Payroll
+              <h1 className="font-garamond text-base md:text-lg font-bold text-[#051C2C] leading-none tracking-tight">
+                Enterprise Payroll & Annual Workforce Capacity Planning Excel Toolkit
               </h1>
               <span className="text-[10px] font-semibold tracking-wider uppercase px-2 py-0.5 rounded-full bg-[#2251FF]/10 text-[#2251FF]">
                 SaaS Edition
@@ -126,7 +123,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               }`}
             >
               <Building2 className="w-3.5 h-3.5" />
-              <span>{isDeptActive && activeDeptMeta ? activeDeptMeta.shortName : 'Depts (1~7)'}</span>
+              <span>{isDeptActive && activeDeptMeta ? activeDeptMeta.shortName : 'Depts'}</span>
               <ChevronDown className="w-3 h-3 ml-0.5" />
               {isDeptActive && (
                 <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#2251FF] rounded-t-full" />

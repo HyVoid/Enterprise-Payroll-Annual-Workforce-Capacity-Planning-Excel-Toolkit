@@ -319,13 +319,19 @@ export default function App() {
 
       {/* Footer */}
       <footer className="border-t border-[#E8E8E6] bg-white py-4 text-center text-xs text-[#888888]">
-        <div className="max-w-[1400px] mx-auto px-10 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <div>
-            Workforce Capacity Planning & Payroll Consolidation Toolkit &copy; {new Date().getFullYear()}
+        <div className="max-w-[1400px] mx-auto px-10 flex flex-col gap-2">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
+            <div>
+              Enterprise Payroll & Annual Workforce Capacity Planning Excel Toolkit &copy; {new Date().getFullYear()}
+            </div>
+            <div className="flex items-center gap-4">
+              <span>Status: <strong className="text-[#00C853]">Auto-save Active</strong></span>
+              <span>Frontend Engine: <strong className="text-[#051C2C]">React + TypeScript</strong></span>
+            </div>
           </div>
-          <div className="flex items-center gap-4">
-            <span>Status: <strong className="text-[#00C853]">Auto-save Active</strong></span>
-            <span>Frontend Engine: <strong className="text-[#051C2C]">React + TypeScript</strong></span>
+          <div className="text-[11px] text-[#888888] pt-1 border-t border-gray-100 flex items-center justify-center gap-1.5">
+            <span className="font-semibold text-[#051C2C]">Privacy & Data Security Notice:</span>
+            <span>All data storage operates strictly within your browser's localStorage. The application itself does not retain or store any user data on external servers.</span>
           </div>
         </div>
       </footer>
